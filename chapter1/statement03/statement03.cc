@@ -8,7 +8,7 @@
 
 using namespace std;
 
-string statement03(const invoice_t& invoce, const plays_t& plays) {
+string renderPlainText(const invoice_t& invoce, const plays_t& plays) {
     auto playFor = [&plays](const performance_t& aPerformance) -> const play_t& {
         return plays.at(aPerformance.playID);
     };
@@ -81,4 +81,10 @@ string statement03(const invoice_t& invoce, const plays_t& plays) {
     result << "Amount owed is " << usd(totalAmount()) << endl;
     result << "You earned " << to_string(totalVolumeCredits()) << " credits" << endl;
     return move(result).str();
+}
+
+// 拆分阶段(154)
+// 提炼函数(106)
+string statement03(const invoice_t& invoce, const plays_t& plays) {
+    return renderPlainText(invoce, plays);
 }
