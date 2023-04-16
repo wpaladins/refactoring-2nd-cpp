@@ -65,15 +65,19 @@ string statement02(const invoice_t& invoce, const plays_t& plays) {
     ostringstream result;
     result << "Statement for " << invoce.customer << endl;
 
+    // 拆分循环(227)
     for (auto& perf : invoce.performances) {
-        volume_credits += volumeCreditsFor(perf);
-
         // 内联变量(123)
         result << "  " << playFor(perf).name + ": "
                << usd(amountFor(perf)) << " ("
                << to_string(perf.audience) << " seats)" << endl;
         total_amount += amountFor(perf);
     }
+
+    for (auto& perf : invoce.performances) {
+        volume_credits += volumeCreditsFor(perf);
+    }
+
     result << "Amount owed is " << usd(total_amount) << endl;
     result << "You earned " << to_string(volume_credits) << " credits" << endl;
     return move(result).str();
