@@ -42,14 +42,14 @@ string statement02(const invoice_t& invoce, const plays_t& plays) {
         return result;
     };
 
-    auto volumeCreditsFor = [&](const performance_t& perf) {
-        int volume_credits = 0;
-        volume_credits += max(perf.audience - 30, 0);
+    auto volumeCreditsFor = [&](const performance_t& aPerformance) {
+        int result = 0;
+        result += max(aPerformance.audience - 30, 0);
         // 内联变量(123)
-        if (COMEDY_TYPE == playFor(perf).type) {
-            volume_credits += floor(perf.audience / 5);
+        if (COMEDY_TYPE == playFor(aPerformance).type) {
+            result += floor(aPerformance.audience / 5);
         }
-        return volume_credits;
+        return result;
     };
 
     float total_amount = 0;
