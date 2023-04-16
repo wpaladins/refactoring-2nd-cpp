@@ -8,7 +8,12 @@
 
 using namespace std;
 
-string statement02(const invoice_t& invoce, plays_t& plays) {
+string statement02(const invoice_t& invoce, const plays_t& plays) {
+    // 以查询取代临时变量(178)
+    auto playFor = [&plays](const performance_t& aPerformance) -> const play_t& { // 注意返回值类型
+        return plays.at(aPerformance.playID); // 使用 at(), 因为 plays 是 const 的
+    };
+
     // 提炼函数(106)
     auto amountFor = [&](const performance_t& aPerformance, const play_t& play) {
         float result = 0;
@@ -43,8 +48,8 @@ string statement02(const invoice_t& invoce, plays_t& plays) {
     result.precision(2);
     result << fixed << "Statement for " << invoce.customer << endl;
 
-    for (const auto& perf : invoce.performances) {
-        auto& play = plays[perf.playID];
+    for (auto& perf : invoce.performances) {
+        auto& play = playFor(perf);
         float this_amount = amountFor(perf, play);
 
         volume_credits += max(perf.audience - 30, 0);
