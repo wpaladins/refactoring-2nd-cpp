@@ -42,6 +42,16 @@ string statement02(const invoice_t& invoce, const plays_t& plays) {
         return result;
     };
 
+    auto volumeCreditsFor = [&](const performance_t& perf) {
+        int volume_credits = 0;
+        volume_credits += max(perf.audience - 30, 0);
+        // 内联变量(123)
+        if (COMEDY_TYPE == playFor(perf).type) {
+            volume_credits += floor(perf.audience / 5);
+        }
+        return volume_credits;
+    };
+
     float total_amount = 0;
     int volume_credits = 0;
 
@@ -50,11 +60,7 @@ string statement02(const invoice_t& invoce, const plays_t& plays) {
     result << fixed << "Statement for " << invoce.customer << endl;
 
     for (auto& perf : invoce.performances) {
-        volume_credits += max(perf.audience - 30, 0);
-        // 内联变量(123)
-        if (COMEDY_TYPE == playFor(perf).type) {
-            volume_credits += floor(perf.audience / 5);
-        }
+        volume_credits += volumeCreditsFor(perf);
 
         // 内联变量(123)
         result << "  " << playFor(perf).name + ": $"
