@@ -10,10 +10,12 @@ struct performance_t
     int audience;
 };
 
+using performances_t = std::vector<performance_t>;
+
 struct invoice_t
 {
     std::string customer;
-    std::vector<performance_t> performances;
+    performances_t performances;
 };
 
 using invoices_t = std::vector<invoice_t>;
