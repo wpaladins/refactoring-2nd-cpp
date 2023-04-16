@@ -59,6 +59,17 @@ string statement02(const invoice_t& invoce, const plays_t& plays) {
         return "$" + number_str.substr(0, number_str.find(".") + 3);
     };
 
+    // 以查询取代临时变量(178)
+    // 提炼函数(106)
+    auto totalVolumeCredits = [&]() {
+        // 移动语句(223)
+        int result = 0;
+        for (auto& perf : invoce.performances) {
+            result += volumeCreditsFor(perf);
+        }
+        return result;
+    };
+
     int total_amount = 0;
 
     ostringstream result;
@@ -73,13 +84,8 @@ string statement02(const invoice_t& invoce, const plays_t& plays) {
         total_amount += amountFor(perf);
     }
 
-    // 移动语句(223)
-    int volume_credits = 0;
-    for (auto& perf : invoce.performances) {
-        volume_credits += volumeCreditsFor(perf);
-    }
-
     result << "Amount owed is " << usd(total_amount) << endl;
-    result << "You earned " << to_string(volume_credits) << " credits" << endl;
+    // 内联变量(123)
+    result << "You earned " << to_string(totalVolumeCredits()) << " credits" << endl;
     return move(result).str();
 }
