@@ -49,15 +49,17 @@ string statement02(const invoice_t& invoce, const plays_t& plays) {
     result << fixed << "Statement for " << invoce.customer << endl;
 
     for (auto& perf : invoce.performances) {
-        auto& play = playFor(perf);
-        float this_amount = amountFor(perf, play);
+        // 内联变量(123)
+        float this_amount = amountFor(perf, playFor(perf));
 
         volume_credits += max(perf.audience - 30, 0);
-        if (COMEDY_TYPE == play.type) {
+        // 内联变量(123)
+        if (COMEDY_TYPE == playFor(perf).type) {
             volume_credits += floor(perf.audience / 5);
         }
 
-        result << "  " << play.name + ": $"
+        // 内联变量(123)
+        result << "  " << playFor(perf).name + ": $"
                << (this_amount / 100) << " ("
                << to_string(perf.audience) << " seats)" << endl;
         total_amount += this_amount;
