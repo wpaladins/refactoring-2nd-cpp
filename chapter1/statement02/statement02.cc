@@ -70,7 +70,13 @@ string statement02(const invoice_t& invoce, const plays_t& plays) {
         return result;
     };
 
-    int total_amount = 0;
+    auto totalAmount = [&]() {
+        int result = 0;
+        for (auto& perf : invoce.performances) {
+            result += amountFor(perf);
+        }
+        return result;
+    };
 
     ostringstream result;
     result << "Statement for " << invoce.customer << endl;
@@ -79,12 +85,11 @@ string statement02(const invoice_t& invoce, const plays_t& plays) {
     for (auto& perf : invoce.performances) {
         // 内联变量(123)
         result << "  " << playFor(perf).name + ": "
-               << usd(amountFor(perf)) << " ("
-               << to_string(perf.audience) << " seats)" << endl;
-        total_amount += amountFor(perf);
+            << usd(amountFor(perf)) << " ("
+            << to_string(perf.audience) << " seats)" << endl;
     }
 
-    result << "Amount owed is " << usd(total_amount) << endl;
+    result << "Amount owed is " << usd(totalAmount()) << endl;
     // 内联变量(123)
     result << "You earned " << to_string(totalVolumeCredits()) << " credits" << endl;
     return move(result).str();
