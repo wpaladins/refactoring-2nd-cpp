@@ -50,9 +50,6 @@ string statement02(const invoice_t& invoce, const plays_t& plays) {
     result << fixed << "Statement for " << invoce.customer << endl;
 
     for (auto& perf : invoce.performances) {
-        // 内联变量(123)
-        float this_amount = amountFor(perf);
-
         volume_credits += max(perf.audience - 30, 0);
         // 内联变量(123)
         if (COMEDY_TYPE == playFor(perf).type) {
@@ -61,9 +58,9 @@ string statement02(const invoice_t& invoce, const plays_t& plays) {
 
         // 内联变量(123)
         result << "  " << playFor(perf).name + ": $"
-               << (this_amount / 100) << " ("
+               << (amountFor(perf) / 100) << " ("
                << to_string(perf.audience) << " seats)" << endl;
-        total_amount += this_amount;
+        total_amount += amountFor(perf);
     }
     result << "Amount owed is $" << (total_amount/100) << endl;
     result << "You earned " << to_string(volume_credits) << " credits" << endl;
