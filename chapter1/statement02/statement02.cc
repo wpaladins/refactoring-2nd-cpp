@@ -52,23 +52,26 @@ string statement02(const invoice_t& invoce, const plays_t& plays) {
         return result;
     };
 
+    auto format = [](float aNumber) {
+        return "$" + to_string(round(aNumber * 100)/100).substr(0, to_string(aNumber).find(".") + 3);
+    };
+
     float total_amount = 0;
     int volume_credits = 0;
 
     ostringstream result;
-    result.precision(2);
-    result << fixed << "Statement for " << invoce.customer << endl;
+    result << "Statement for " << invoce.customer << endl;
 
     for (auto& perf : invoce.performances) {
         volume_credits += volumeCreditsFor(perf);
 
         // 内联变量(123)
-        result << "  " << playFor(perf).name + ": $"
-               << (amountFor(perf) / 100) << " ("
+        result << "  " << playFor(perf).name + ": "
+               << format(amountFor(perf) / 100) << " ("
                << to_string(perf.audience) << " seats)" << endl;
         total_amount += amountFor(perf);
     }
-    result << "Amount owed is $" << (total_amount/100) << endl;
+    result << "Amount owed is " << format(total_amount / 100) << endl;
     result << "You earned " << to_string(volume_credits) << " credits" << endl;
     return move(result).str();
 }
