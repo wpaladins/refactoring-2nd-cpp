@@ -60,7 +60,6 @@ string statement02(const invoice_t& invoce, const plays_t& plays) {
     };
 
     int total_amount = 0;
-    int volume_credits = 0;
 
     ostringstream result;
     result << "Statement for " << invoce.customer << endl;
@@ -74,6 +73,8 @@ string statement02(const invoice_t& invoce, const plays_t& plays) {
         total_amount += amountFor(perf);
     }
 
+    // 移动语句(223)
+    int volume_credits = 0;
     for (auto& perf : invoce.performances) {
         volume_credits += volumeCreditsFor(perf);
     }
