@@ -8,34 +8,34 @@
 
 using namespace std;
 
-// 提炼函数(106)
-static float amount_for(const performance_t& aPerformance, const play_t& play) {
-    float result = 0;
-
-    switch (play.type)
-    {
-    case TRAGEDY_TYPE:
-        result = 40000;
-        if (aPerformance.audience > 30) {
-            result += 1000 * (aPerformance.audience - 30);
-        }
-        break;
-
-    case COMEDY_TYPE:
-        result = 30000;
-        if (aPerformance.audience > 20) {
-            result += 10000 + 500 * (aPerformance.audience - 20);
-        }
-        result += 300 * aPerformance.audience;
-        break;
-
-    default:
-        exit(-1);
-    }
-    return result;
-}
-
 string statement02(const invoice_t& invoce, plays_t& plays) {
+    // 提炼函数(106)
+    auto amountFor = [&](const performance_t& aPerformance, const play_t& play) {
+        float result = 0;
+
+        switch (play.type)
+        {
+        case TRAGEDY_TYPE:
+            result = 40000;
+            if (aPerformance.audience > 30) {
+                result += 1000 * (aPerformance.audience - 30);
+            }
+            break;
+
+        case COMEDY_TYPE:
+            result = 30000;
+            if (aPerformance.audience > 20) {
+                result += 10000 + 500 * (aPerformance.audience - 20);
+            }
+            result += 300 * aPerformance.audience;
+            break;
+
+        default:
+            exit(-1);
+        }
+        return result;
+    };
+
     float total_amount = 0;
     int volume_credits = 0;
 
@@ -45,16 +45,13 @@ string statement02(const invoice_t& invoce, plays_t& plays) {
 
     for (const auto& perf : invoce.performances) {
         auto& play = plays[perf.playID];
-        float this_amount = amount_for(perf, play);
+        float this_amount = amountFor(perf, play);
 
-        // 增加观众量积分
         volume_credits += max(perf.audience - 30, 0);
-        // 为每十位参加喜剧的观众增加额外积分
         if (COMEDY_TYPE == play.type) {
             volume_credits += floor(perf.audience / 5);
         }
 
-        // 将该账单输出为一行
         result << "  " << play.name + ": $"
                << (this_amount / 100) << " ("
                << to_string(perf.audience) << " seats)" << endl;
