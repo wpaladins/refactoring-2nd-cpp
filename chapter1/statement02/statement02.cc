@@ -8,30 +8,31 @@
 
 using namespace std;
 
+// 提炼函数(106)
 static float amount_for(const performance_t& perf, const play_t& play) {
-    float this_amount = 0;
+    float result = 0;
 
     switch (play.type)
     {
     case TRAGEDY_TYPE:
-        this_amount = 40000;
+        result = 40000;
         if (perf.audience > 30) {
-            this_amount += 1000 * (perf.audience - 30);
+            result += 1000 * (perf.audience - 30);
         }
         break;
 
     case COMEDY_TYPE:
-        this_amount = 30000;
+        result = 30000;
         if (perf.audience > 20) {
-            this_amount += 10000 + 500 * (perf.audience - 20);
+            result += 10000 + 500 * (perf.audience - 20);
         }
-        this_amount += 300 * perf.audience;
+        result += 300 * perf.audience;
         break;
 
     default:
         exit(-1);
     }
-    return this_amount;
+    return result;
 }
 
 string statement02(const invoice_t& invoce, plays_t& plays) {
