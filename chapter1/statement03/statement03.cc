@@ -8,7 +8,11 @@
 
 using namespace std;
 
-string renderPlainText(const invoice_t& invoce, const plays_t& plays) {
+struct statement_data_t {
+    string customer;
+};
+
+string renderPlainText(const statement_data_t& data, const invoice_t& invoce, const plays_t& plays) {
     auto playFor = [&plays](const performance_t& aPerformance) -> const play_t& {
         return plays.at(aPerformance.playID);
     };
@@ -70,7 +74,7 @@ string renderPlainText(const invoice_t& invoce, const plays_t& plays) {
     };
 
     ostringstream result;
-    result << "Statement for " << invoce.customer << endl;
+    result << "Statement for " << data.customer << endl;
 
     for (auto& perf : invoce.performances) {
         result << "  " << playFor(perf).name + ": "
@@ -86,5 +90,7 @@ string renderPlainText(const invoice_t& invoce, const plays_t& plays) {
 // 拆分阶段(154)
 // 提炼函数(106)
 string statement03(const invoice_t& invoce, const plays_t& plays) {
-    return renderPlainText(invoce, plays);
+    statement_data_t statementData;
+    statementData.customer = invoce.customer;
+    return renderPlainText(statementData, invoce, plays);
 }
