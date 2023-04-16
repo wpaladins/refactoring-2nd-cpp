@@ -9,10 +9,11 @@
 using namespace std;
 
 struct statement_data_t {
-    string customer;
+    const string& customer; // 使用 const &
+    const performances_t& performances;
 };
 
-string renderPlainText(const statement_data_t& data, const invoice_t& invoce, const plays_t& plays) {
+string renderPlainText(const statement_data_t& data, const plays_t& plays) {
     auto playFor = [&plays](const performance_t& aPerformance) -> const play_t& {
         return plays.at(aPerformance.playID);
     };
@@ -59,7 +60,7 @@ string renderPlainText(const statement_data_t& data, const invoice_t& invoce, co
 
     auto totalVolumeCredits = [&]() {
         int result = 0;
-        for (auto& perf : invoce.performances) {
+        for (auto& perf : data.performances) {
             result += volumeCreditsFor(perf);
         }
         return result;
@@ -67,7 +68,7 @@ string renderPlainText(const statement_data_t& data, const invoice_t& invoce, co
 
     auto totalAmount = [&]() {
         int result = 0;
-        for (auto& perf : invoce.performances) {
+        for (auto& perf : data.performances) {
             result += amountFor(perf);
         }
         return result;
@@ -76,7 +77,7 @@ string renderPlainText(const statement_data_t& data, const invoice_t& invoce, co
     ostringstream result;
     result << "Statement for " << data.customer << endl;
 
-    for (auto& perf : invoce.performances) {
+    for (auto& perf : data.performances) {
         result << "  " << playFor(perf).name + ": "
             << usd(amountFor(perf)) << " ("
             << to_string(perf.audience) << " seats)" << endl;
@@ -90,7 +91,9 @@ string renderPlainText(const statement_data_t& data, const invoice_t& invoce, co
 // 拆分阶段(154)
 // 提炼函数(106)
 string statement03(const invoice_t& invoce, const plays_t& plays) {
-    statement_data_t statementData;
-    statementData.customer = invoce.customer;
-    return renderPlainText(statementData, invoce, plays);
+    statement_data_t statementData{
+        invoce.customer,
+        invoce.performances
+    };
+    return renderPlainText(statementData, plays);
 }
