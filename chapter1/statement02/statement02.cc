@@ -15,10 +15,11 @@ string statement02(const invoice_t& invoce, const plays_t& plays) {
     };
 
     // 提炼函数(106)
-    auto amountFor = [&](const performance_t& aPerformance, const play_t& play) {
+    // 该表函数声明(124)
+    auto amountFor = [&](const performance_t& aPerformance) {
         float result = 0;
 
-        switch (play.type)
+        switch (playFor(aPerformance).type)
         {
         case TRAGEDY_TYPE:
             result = 40000;
@@ -50,7 +51,7 @@ string statement02(const invoice_t& invoce, const plays_t& plays) {
 
     for (auto& perf : invoce.performances) {
         // 内联变量(123)
-        float this_amount = amountFor(perf, playFor(perf));
+        float this_amount = amountFor(perf);
 
         volume_credits += max(perf.audience - 30, 0);
         // 内联变量(123)
