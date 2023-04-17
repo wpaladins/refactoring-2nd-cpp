@@ -4,6 +4,7 @@
 #include <cmath>
 #include <iomanip>
 #include <iostream>
+#include <numeric>
 #include <sstream>
 
 using namespace std;
@@ -92,20 +93,18 @@ string statement03(const invoice_t& invoce, const plays_t& plays) {
         return result;
     };
 
+    // 以管道取代循环(231)
     auto totalVolumeCredits = [&](const statement_data_t& data) {
-        int result = 0;
-        for (auto& perf : data.performances) {
-            result += perf.volumeCredits;
-        }
-        return result;
+        return accumulate(data.performances.begin(), data.performances.end(), 0, [](int result, const enriched_performance_t& aPerformance) {
+            return result + aPerformance.volumeCredits;
+        });
     };
 
+    // 以管道取代循环(231)
     auto totalAmount = [&](const statement_data_t& data) {
-        int result = 0;
-        for (auto& perf : data.performances) {
-            result += perf.amount;
-        }
-        return result;
+        return accumulate(data.performances.begin(), data.performances.end(), 0, [](int result, const enriched_performance_t& aPerformance) {
+            return result + aPerformance.amount;
+        });
     };
 
     enriched_performances_t enriched_performances;
