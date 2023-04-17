@@ -12,6 +12,7 @@ using namespace std;
 struct enriched_performance_t : public performance_t {
     const play_t& play;
     int amount;
+    int volumeCredits;
     enriched_performance_t(const performance_t& parent,
                            const play_t& play)
                            : performance_t(parent),
@@ -27,15 +28,6 @@ struct statement_data_t {
 
 // 保持数据不可变(不修改传给函数的参数)
 string renderPlainText(const statement_data_t& data, const plays_t& plays) {
-    auto volumeCreditsFor = [&](const enriched_performance_t& aPerformance) {
-        int result = 0;
-        result += max(aPerformance.audience - 30, 0);
-        if (COMEDY_TYPE == aPerformance.play.type) {
-            result += floor(aPerformance.audience / 5);
-        }
-        return result;
-    };
-
     auto usd = [](int aNumber) {
         string number_str = to_string(float(aNumber)/100);
         return "$" + number_str.substr(0, number_str.find(".") + 3);
@@ -44,7 +36,7 @@ string renderPlainText(const statement_data_t& data, const plays_t& plays) {
     auto totalVolumeCredits = [&]() {
         int result = 0;
         for (auto& perf : data.performances) {
-            result += volumeCreditsFor(perf);
+            result += perf.volumeCredits;
         }
         return result;
     };
@@ -105,10 +97,20 @@ string statement03(const invoice_t& invoce, const plays_t& plays) {
         return result;
     };
 
+    auto volumeCreditsFor = [&](const enriched_performance_t& aPerformance) {
+        int result = 0;
+        result += max(aPerformance.audience - 30, 0);
+        if (COMEDY_TYPE == aPerformance.play.type) {
+            result += floor(aPerformance.audience / 5);
+        }
+        return result;
+    };
+
     enriched_performances_t enriched_performances;
     for_each(invoce.performances.begin(), invoce.performances.end(), [&](auto& aPerformance) {
         enriched_performances.emplace_back(aPerformance, playFor(aPerformance));
         enriched_performances.back().amount = amountFor(enriched_performances.back());
+        enriched_performances.back().volumeCredits = volumeCreditsFor(enriched_performances.back());
     });
 
     statement_data_t statementData{
