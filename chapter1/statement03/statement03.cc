@@ -8,20 +8,28 @@
 
 using namespace std;
 
-struct statement_data_t {
-    const string& customer; // 使用 const &
-    const performances_t& performances;
+// 复制 performance_t 中的信息, 而其他信息仅引用
+struct enriched_performance_t : public performance_t {
+    const play_t& play;
+    enriched_performance_t(const performance_t& parent,
+                           const play_t& play)
+                           : performance_t(parent),
+                             play(play) {}
 };
 
-string renderPlainText(const statement_data_t& data, const plays_t& plays) {
-    auto playFor = [&plays](const performance_t& aPerformance) -> const play_t& {
-        return plays.at(aPerformance.playID);
-    };
+using enriched_performances_t = vector<enriched_performance_t>;
 
-    auto amountFor = [&](const performance_t& aPerformance) {
+struct statement_data_t {
+    const string& customer; // 使用 const &
+    const enriched_performances_t& performances;
+};
+
+// 保持数据不可变(不修改传给函数的参数)
+string renderPlainText(const statement_data_t& data, const plays_t& plays) {
+    auto amountFor = [&](const enriched_performance_t& aPerformance) {
         int result = 0;
 
-        switch (playFor(aPerformance).type)
+        switch (aPerformance.play.type)
         {
         case TRAGEDY_TYPE:
             result = 40000;
@@ -44,10 +52,10 @@ string renderPlainText(const statement_data_t& data, const plays_t& plays) {
         return result;
     };
 
-    auto volumeCreditsFor = [&](const performance_t& aPerformance) {
+    auto volumeCreditsFor = [&](const enriched_performance_t& aPerformance) {
         int result = 0;
         result += max(aPerformance.audience - 30, 0);
-        if (COMEDY_TYPE == playFor(aPerformance).type) {
+        if (COMEDY_TYPE == aPerformance.play.type) {
             result += floor(aPerformance.audience / 5);
         }
         return result;
@@ -78,7 +86,7 @@ string renderPlainText(const statement_data_t& data, const plays_t& plays) {
     result << "Statement for " << data.customer << endl;
 
     for (auto& perf : data.performances) {
-        result << "  " << playFor(perf).name + ": "
+        result << "  " << perf.play.name + ": "
             << usd(amountFor(perf)) << " ("
             << to_string(perf.audience) << " seats)" << endl;
     }
@@ -91,9 +99,20 @@ string renderPlainText(const statement_data_t& data, const plays_t& plays) {
 // 拆分阶段(154)
 // 提炼函数(106)
 string statement03(const invoice_t& invoce, const plays_t& plays) {
+    // 搬移函数(198)
+    auto playFor = [&plays](const performance_t& aPerformance) -> const play_t& {
+        return plays.at(aPerformance.playID);
+    };
+
+    enriched_performances_t enriched_performances;
+    for_each(invoce.performances.begin(), invoce.performances.end(), [&](auto& aPerformance) {
+        enriched_performances.emplace_back(aPerformance, playFor(aPerformance));
+    });
+
     statement_data_t statementData{
         invoce.customer,
-        invoce.performances
+        enriched_performances
     };
+
     return renderPlainText(statementData, plays);
 }
