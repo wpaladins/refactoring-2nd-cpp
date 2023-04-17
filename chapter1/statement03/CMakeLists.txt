@@ -12,6 +12,7 @@ include_directories(.)
 add_executable(
     statement03_test
     statement03.cc
+    create_statement_data.cc
     statement03_test.cc
 )
 target_link_libraries(statement03_test gtest_main)
