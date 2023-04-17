@@ -24,6 +24,8 @@ using enriched_performances_t = vector<enriched_performance_t>;
 struct statement_data_t {
     const string& customer; // 使用 const &
     const enriched_performances_t& performances;
+    int totalAmount;
+    int totalVolumeCredits;
 };
 
 // 保持数据不可变(不修改传给函数的参数)
@@ -31,22 +33,6 @@ string renderPlainText(const statement_data_t& data, const plays_t& plays) {
     auto usd = [](int aNumber) {
         string number_str = to_string(float(aNumber)/100);
         return "$" + number_str.substr(0, number_str.find(".") + 3);
-    };
-
-    auto totalVolumeCredits = [&]() {
-        int result = 0;
-        for (auto& perf : data.performances) {
-            result += perf.volumeCredits;
-        }
-        return result;
-    };
-
-    auto totalAmount = [&]() {
-        int result = 0;
-        for (auto& perf : data.performances) {
-            result += perf.amount;
-        }
-        return result;
     };
 
     ostringstream result;
@@ -58,8 +44,8 @@ string renderPlainText(const statement_data_t& data, const plays_t& plays) {
             << to_string(perf.audience) << " seats)" << endl;
     }
 
-    result << "Amount owed is " << usd(totalAmount()) << endl;
-    result << "You earned " << to_string(totalVolumeCredits()) << " credits" << endl;
+    result << "Amount owed is " << usd(data.totalAmount) << endl;
+    result << "You earned " << to_string(data.totalVolumeCredits) << " credits" << endl;
     return move(result).str();
 }
 
@@ -106,6 +92,22 @@ string statement03(const invoice_t& invoce, const plays_t& plays) {
         return result;
     };
 
+    auto totalVolumeCredits = [&](const statement_data_t& data) {
+        int result = 0;
+        for (auto& perf : data.performances) {
+            result += perf.volumeCredits;
+        }
+        return result;
+    };
+
+    auto totalAmount = [&](const statement_data_t& data) {
+        int result = 0;
+        for (auto& perf : data.performances) {
+            result += perf.amount;
+        }
+        return result;
+    };
+
     enriched_performances_t enriched_performances;
     for_each(invoce.performances.begin(), invoce.performances.end(), [&](auto& aPerformance) {
         enriched_performances.emplace_back(aPerformance, playFor(aPerformance));
@@ -117,6 +119,8 @@ string statement03(const invoice_t& invoce, const plays_t& plays) {
         invoce.customer,
         enriched_performances
     };
+    statementData.totalAmount = totalAmount(statementData);
+    statementData.totalVolumeCredits = totalVolumeCredits(statementData);
 
     return renderPlainText(statementData, plays);
 }
