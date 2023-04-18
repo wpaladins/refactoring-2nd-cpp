@@ -13,25 +13,7 @@ public:
     virtual ~PerformanceCalculator() {}
 
     virtual int amount() const {
-        int result = 0;
-
-        switch (play.type)
-        {
-        case TRAGEDY_TYPE:
-            exit(-1);
-
-        case COMEDY_TYPE:
-            result = 30000;
-            if (performance.audience > 20) {
-                result += 10000 + 500 * (performance.audience - 20);
-            }
-            result += 300 * performance.audience;
-            break;
-
-        default:
-            exit(-1);
-        }
-        return result;
+        exit(-1);
     }
 
     int volumeCredits() {
@@ -66,6 +48,15 @@ public:
 class ComedyCalculator final : public PerformanceCalculator {
 public:
     ComedyCalculator(const performance_t& aPerformance, const play_t& aPlay) : PerformanceCalculator(aPerformance, aPlay) {}
+
+    int amount() const override {
+        int result = 30000;
+        if (performance.audience > 20) {
+            result += 10000 + 500 * (performance.audience - 20);
+        }
+        result += 300 * performance.audience;
+        return result;
+    }
 };
 
 unique_ptr<PerformanceCalculator> createPerformanceCalculator(const performance_t& aPerformance, const play_t& aPlay) {
