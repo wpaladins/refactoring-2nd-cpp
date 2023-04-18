@@ -36,6 +36,15 @@ public:
         return result;
     }
 
+    int volumeCredits() {
+        int result = 0;
+        result += max(performance.audience - 30, 0);
+        if (COMEDY_TYPE == play.type) {
+            result += floor(performance.audience / 5);
+        }
+        return result;
+    };
+
 public:
     const play_t& play;
 
@@ -46,15 +55,6 @@ private:
 statement_data_t createStatementData(const invoice_t& invoce, const plays_t& plays) {
     auto playFor = [&plays](const performance_t& aPerformance) -> const play_t& {
         return plays.at(aPerformance.playID);
-    };
-
-    auto volumeCreditsFor = [&](const enriched_performance_t& aPerformance) {
-        int result = 0;
-        result += max(aPerformance.audience - 30, 0);
-        if (COMEDY_TYPE == aPerformance.play.type) {
-            result += floor(aPerformance.audience / 5);
-        }
-        return result;
     };
 
     auto totalVolumeCredits = [&](const statement_data_t& data) {
@@ -74,7 +74,7 @@ statement_data_t createStatementData(const invoice_t& invoce, const plays_t& pla
         PerformanceCalculator calculator{aPerformance, playFor(aPerformance)};
         enriched_performances.emplace_back(aPerformance, calculator.play);
         enriched_performances.back().amount = calculator.amount();
-        enriched_performances.back().volumeCredits = volumeCreditsFor(enriched_performances.back());
+        enriched_performances.back().volumeCredits = calculator.volumeCredits();
     });
 
     statement_data_t result{
