@@ -16,13 +16,8 @@ public:
         exit(-1);
     }
 
-    int volumeCredits() {
-        int result = 0;
-        result += max(performance.audience - 30, 0);
-        if (COMEDY_TYPE == play.type) {
-            result += floor(performance.audience / 5);
-        }
-        return result;
+    virtual int volumeCredits() const {
+        return max(performance.audience - 30, 0);
     };
 
 public:
@@ -56,6 +51,10 @@ public:
         }
         result += 300 * performance.audience;
         return result;
+    }
+
+    int volumeCredits() const override {
+        return PerformanceCalculator::volumeCredits() + floor(performance.audience / 5);
     }
 };
 
