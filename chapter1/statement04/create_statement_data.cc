@@ -12,17 +12,13 @@ public:
     PerformanceCalculator(const performance_t& aPerformance, const play_t& aPlay) : performance(aPerformance), play(aPlay) {}
     virtual ~PerformanceCalculator() {}
 
-    int amount() {
+    virtual int amount() const {
         int result = 0;
 
         switch (play.type)
         {
         case TRAGEDY_TYPE:
-            result = 40000;
-            if (performance.audience > 30) {
-                result += 1000 * (performance.audience - 30);
-            }
-            break;
+            exit(-1);
 
         case COMEDY_TYPE:
             result = 30000;
@@ -50,13 +46,21 @@ public:
 public:
     const play_t& play;
 
-private:
+protected:
     const performance_t& performance;
 };
 
 class TragedyCalculator final : public PerformanceCalculator {
 public:
     TragedyCalculator(const performance_t& aPerformance, const play_t& aPlay) : PerformanceCalculator(aPerformance, aPlay) {}
+
+    int amount() const override {
+        int result = 40000;
+        if (performance.audience > 30) {
+            result += 1000 * (performance.audience - 30);
+        }
+        return result;
+    }
 };
 
 class ComedyCalculator final : public PerformanceCalculator {
