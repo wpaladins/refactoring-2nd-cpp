@@ -10,6 +10,7 @@ using namespace std;
 class PerformanceCalculator {
 public:
     PerformanceCalculator(const performance_t& aPerformance, const play_t& aPlay) : performance(aPerformance), play(aPlay) {}
+    virtual ~PerformanceCalculator() {}
 
     int amount() {
         int result = 0;
@@ -53,7 +54,30 @@ private:
     const performance_t& performance;
 };
 
+class TragedyCalculator final : public PerformanceCalculator {
+public:
+    TragedyCalculator(const performance_t& aPerformance, const play_t& aPlay) : PerformanceCalculator(aPerformance, aPlay) {}
+};
+
+class ComedyCalculator final : public PerformanceCalculator {
+public:
+    ComedyCalculator(const performance_t& aPerformance, const play_t& aPlay) : PerformanceCalculator(aPerformance, aPlay) {}
+};
+
 unique_ptr<PerformanceCalculator> createPerformanceCalculator(const performance_t& aPerformance, const play_t& aPlay) {
+    switch (aPlay.type)
+    {
+    case TRAGEDY_TYPE:
+        return make_unique<TragedyCalculator>(aPerformance, aPlay);
+        break;
+
+    case COMEDY_TYPE:
+        return make_unique<ComedyCalculator>(aPerformance, aPlay);
+        break;
+
+    default:
+        exit(-1);
+    }
     return make_unique<PerformanceCalculator>(aPerformance, aPlay);
 }
 
