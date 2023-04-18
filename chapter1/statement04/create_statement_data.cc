@@ -6,6 +6,14 @@
 
 using namespace std;
 
+class PerformanceCalculator {
+public:
+    PerformanceCalculator(const performance_t& aPerformance) : performance(aPerformance) {}
+
+private:
+    const performance_t& performance;
+};
+
 statement_data_t createStatementData(const invoice_t& invoce, const plays_t& plays) {
     auto playFor = [&plays](const performance_t& aPerformance) -> const play_t& {
         return plays.at(aPerformance.playID);
@@ -60,6 +68,7 @@ statement_data_t createStatementData(const invoice_t& invoce, const plays_t& pla
 
     enriched_performances_t enriched_performances;
     for_each(invoce.performances.begin(), invoce.performances.end(), [&](auto& aPerformance) {
+        PerformanceCalculator calculator{aPerformance};
         enriched_performances.emplace_back(aPerformance, playFor(aPerformance));
         enriched_performances.back().amount = amountFor(enriched_performances.back());
         enriched_performances.back().volumeCredits = volumeCreditsFor(enriched_performances.back());
