@@ -1,4 +1,4 @@
-#include "statement03.h"
+#include "create_statement_data.h"
 
 #include <algorithm>
 #include <cmath>
@@ -70,12 +70,12 @@ statement_data_t createStatementData(const invoice_t& invoce, const plays_t& pla
         enriched_performances.back().volumeCredits = volumeCreditsFor(enriched_performances.back());
     });
 
-    statement_data_t statementData{
+    statement_data_t result{
         invoce.customer,
         move(enriched_performances) // pay attention
     };
-    statementData.totalAmount = totalAmount(statementData);
-    statementData.totalVolumeCredits = totalVolumeCredits(statementData);
+    result.totalAmount = totalAmount(result);
+    result.totalVolumeCredits = totalVolumeCredits(result);
 
-    return statementData;
+    return result;
 }

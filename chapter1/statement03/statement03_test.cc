@@ -1,3 +1,4 @@
+#include "create_statement_data.h"
 #include "statement03.h"
 
 #include <gtest/gtest.h>
