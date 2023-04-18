@@ -10,6 +10,32 @@ class PerformanceCalculator {
 public:
     PerformanceCalculator(const performance_t& aPerformance, const play_t& aPlay) : performance(aPerformance), play(aPlay) {}
 
+    int amount() {
+        int result = 0;
+
+        switch (play.type)
+        {
+        case TRAGEDY_TYPE:
+            result = 40000;
+            if (performance.audience > 30) {
+                result += 1000 * (performance.audience - 30);
+            }
+            break;
+
+        case COMEDY_TYPE:
+            result = 30000;
+            if (performance.audience > 20) {
+                result += 10000 + 500 * (performance.audience - 20);
+            }
+            result += 300 * performance.audience;
+            break;
+
+        default:
+            exit(-1);
+        }
+        return result;
+    }
+
 public:
     const play_t& play;
 
@@ -20,32 +46,6 @@ private:
 statement_data_t createStatementData(const invoice_t& invoce, const plays_t& plays) {
     auto playFor = [&plays](const performance_t& aPerformance) -> const play_t& {
         return plays.at(aPerformance.playID);
-    };
-
-    auto amountFor = [&](const enriched_performance_t& aPerformance) {
-        int result = 0;
-
-        switch (aPerformance.play.type)
-        {
-        case TRAGEDY_TYPE:
-            result = 40000;
-            if (aPerformance.audience > 30) {
-                result += 1000 * (aPerformance.audience - 30);
-            }
-            break;
-
-        case COMEDY_TYPE:
-            result = 30000;
-            if (aPerformance.audience > 20) {
-                result += 10000 + 500 * (aPerformance.audience - 20);
-            }
-            result += 300 * aPerformance.audience;
-            break;
-
-        default:
-            exit(-1);
-        }
-        return result;
     };
 
     auto volumeCreditsFor = [&](const enriched_performance_t& aPerformance) {
@@ -73,7 +73,7 @@ statement_data_t createStatementData(const invoice_t& invoce, const plays_t& pla
     for_each(invoce.performances.begin(), invoce.performances.end(), [&](auto& aPerformance) {
         PerformanceCalculator calculator{aPerformance, playFor(aPerformance)};
         enriched_performances.emplace_back(aPerformance, calculator.play);
-        enriched_performances.back().amount = amountFor(enriched_performances.back());
+        enriched_performances.back().amount = calculator.amount();
         enriched_performances.back().volumeCredits = volumeCreditsFor(enriched_performances.back());
     });
 
