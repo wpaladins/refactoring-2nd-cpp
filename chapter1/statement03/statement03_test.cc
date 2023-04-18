@@ -78,3 +78,29 @@ Amount owed is $1730.00\n\
 You earned 47 credits\n"
     );
 }
+
+TEST(StatementTestSuite, HtmlStatementTestCase03) {
+    EXPECT_STREQ(htmlStatement03(invoices[0], plays).c_str(), "\
+<h1>Statement for BigCo</h1>\n\
+<table>\n\
+    <tr><th>play</th><th>seats</th><th>cost</th></tr>\n\
+    <tr>\n\
+        <td>Hamlet</td>\n\
+        <td>55</td>\n\
+        <td>$650.00</td>\n\
+    </tr>\n\
+    <tr>\n\
+        <td>As You Like It</td>\n\
+        <td>35</td>\n\
+        <td>$580.00</td>\n\
+    </tr>\n\
+    <tr>\n\
+        <td>Othello</td>\n\
+        <td>40</td>\n\
+        <td>$500.00</td>\n\
+    </tr>\n\
+</table>\n\
+<p>Amount owed is <em>$1730.00</em></p>\n\
+<p>You earned <em>47</em> credits</p>\n"
+    );
+}
