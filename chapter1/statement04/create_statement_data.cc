@@ -8,7 +8,10 @@ using namespace std;
 
 class PerformanceCalculator {
 public:
-    PerformanceCalculator(const performance_t& aPerformance) : performance(aPerformance) {}
+    PerformanceCalculator(const performance_t& aPerformance, const play_t& aPlay) : performance(aPerformance), play(aPlay) {}
+
+public:
+    const play_t& play;
 
 private:
     const performance_t& performance;
@@ -68,8 +71,8 @@ statement_data_t createStatementData(const invoice_t& invoce, const plays_t& pla
 
     enriched_performances_t enriched_performances;
     for_each(invoce.performances.begin(), invoce.performances.end(), [&](auto& aPerformance) {
-        PerformanceCalculator calculator{aPerformance};
-        enriched_performances.emplace_back(aPerformance, playFor(aPerformance));
+        PerformanceCalculator calculator{aPerformance, playFor(aPerformance)};
+        enriched_performances.emplace_back(aPerformance, calculator.play);
         enriched_performances.back().amount = amountFor(enriched_performances.back());
         enriched_performances.back().volumeCredits = volumeCreditsFor(enriched_performances.back());
     });
