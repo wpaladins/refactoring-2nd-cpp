@@ -93,7 +93,7 @@ private:
     int _price;
 };
 
-void Producer::production(int newProduction) {
+inline void Producer::production(int newProduction) {
     _province->totalProduction(_province->totalProduction() + newProduction - _production);
     _production = newProduction;
 }
