@@ -38,3 +38,9 @@ TEST_F(ProvinceTestSuite, changeProduction) {
     EXPECT_EQ(asia->shortfall(), -6);
     EXPECT_EQ(asia->profit(), 292);
 }
+
+TEST_F(ProvinceTestSuite, zeroDemand) {
+    asia->demand(0);
+    EXPECT_EQ(asia->shortfall(), -25);
+    EXPECT_EQ(asia->profit(), 0);
+}

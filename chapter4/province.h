@@ -52,10 +52,6 @@ public:
         });
     }
 
-    void addProducer(std::unique_ptr<Producer> arg) {
-        _totalProduction += arg->production();
-        _producers.push_back(move(arg));
-    }
     const std::vector<std::unique_ptr<Producer>>& producers() { return _producers; }
     int totalProduction() { return _totalProduction; }
     void totalProduction(int arg) { _totalProduction = arg; }
@@ -64,6 +60,13 @@ public:
     }
     int profit() {
         return demandValue() - demandCost();
+    }
+    void demand(int arg) { _demand = arg; }
+
+private:
+    void addProducer(std::unique_ptr<Producer> arg) {
+        _totalProduction += arg->production();
+        _producers.push_back(move(arg));
     }
     int demandCost() {
         int remainingDemand = _demand;
