@@ -17,12 +17,18 @@ ProvinceData sampleProvinceData() {
     };
 }
 
-TEST(province, shortfall) {
-    auto asia = make_unique<Province>(sampleProvinceData());
+class ProvinceTestSuite : public testing::Test {
+protected:
+    void SetUp() override {
+        asia = make_unique<Province>(sampleProvinceData());
+    }
+    unique_ptr<Province> asia;
+};
+
+TEST_F(ProvinceTestSuite, shortfall) {
     ASSERT_EQ(asia->shortfall(), 5);
 }
 
-TEST(province, profit) {
-    auto asia = make_unique<Province>(sampleProvinceData());
+TEST_F(ProvinceTestSuite, profit) {
     EXPECT_EQ(asia->profit(), 230);
 }
