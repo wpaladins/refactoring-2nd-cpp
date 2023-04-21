@@ -56,6 +56,7 @@ public:
         _totalProduction += arg->production();
         _producers.push_back(move(arg));
     }
+    const std::vector<std::unique_ptr<Producer>>& producers() { return _producers; }
     int totalProduction() { return _totalProduction; }
     void totalProduction(int arg) { _totalProduction = arg; }
     int shortfall() {
@@ -68,7 +69,7 @@ public:
         int remainingDemand = _demand;
         int result = 0;
         sort(_producers.begin(), _producers.end(), [](const auto& a, const auto& b) {
-            return a->cost() - b->cost();
+            return a->cost() < b->cost();
         });
         for_each(_producers.begin(), _producers.end(), [&](const auto& p) {
             int contribution = std::min(remainingDemand, p->production());
