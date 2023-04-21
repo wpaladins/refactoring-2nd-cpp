@@ -21,3 +21,8 @@ TEST(province, shortfall) {
     auto asia = make_unique<Province>(sampleProvinceData());
     ASSERT_EQ(asia->shortfall(), 5);
 }
+
+TEST(province, profit) {
+    auto asia = make_unique<Province>(sampleProvinceData());
+    EXPECT_EQ(asia->profit(), 230);
+}
